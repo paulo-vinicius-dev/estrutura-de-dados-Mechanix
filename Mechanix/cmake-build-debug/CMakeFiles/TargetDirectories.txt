@@ -1,0 +1,3 @@
+/home/paulo/CLionProjects/Mechanix/cmake-build-debug/CMakeFiles/Mechanix.dir
+/home/paulo/CLionProjects/Mechanix/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/paulo/CLionProjects/Mechanix/cmake-build-debug/CMakeFiles/rebuild_cache.dir
