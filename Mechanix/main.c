@@ -28,6 +28,136 @@ typedef struct {
     int quantidade;
 } Servico;
 
+// Função responsanvel por inicializar as filas
+void inicializarFila(Fila* fila);
+
+// coloca o carro na sua posição na fila
+void enfileirar(Fila* fila, Carro carro);
+
+// retirar o carro da sua posicao na fila
+Carro desenfileirar(Fila* fila);
+
+// Função responsavel por inicializar os serviços
+void inicializarServico(Servico* servico);
+
+// Função para adicionar um carro ao serviço
+void adicionarAoServico(Servico* servico, Carro carro);
+
+// Função para retirar um carro alocado em um serviço
+void saidaDeCarros(Servico* servico, Fila* filaSaida);
+
+// Função responsavel por mover automaticamente um carro sempre seu servico estiver com vaga disponivel
+void moverParaServico(Fila* filaEntrada, Servico* servicoRodas, Servico* servicoHigienizacao);
+
+// Função responsável por tirar o carro da fila de saida e entregar ele ao seu dono
+void entregaCarros(Fila* filaSaida);
+
+// Função para visualizar as filas(feita para visualizar o comportamento delas no programa)
+void mostrarFilas(Fila* filaEntrada, Servico* servicoRodas, Servico* servicoHigienizacao, Fila* filaSaida);
+
+// Função principal
+int main() {
+    // Iniciliazação das filas
+    Fila filaEntrada;
+    Fila filaSaida;
+
+    inicializarFila(&filaEntrada);
+    inicializarFila(&filaSaida);
+
+    Servico servicoRodas;
+    Servico servicoHigienizacao;
+
+    inicializarServico(&servicoRodas);
+    inicializarServico(&servicoHigienizacao);
+
+    // Loop do menu principal
+    int opcao;
+
+    do {
+        printf("\nMenu:\n");
+        printf("1 - Registrar entrada de carro\n");
+        printf("2 - Realizar saída de carros dos serviços\n");
+        printf("3 - Entregar carros (remover da fila de saída)\n");
+        printf("4 - Mostrar filas\n");
+        printf("0 - Sair\n");
+        printf("Escolha uma opção: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1: {
+                // Pegar as informações necessárias para preencher a strict Carro
+                Carro novoCarro;
+                printf("Digite a placa do carro: ");
+                scanf("%s", novoCarro.placa);
+                printf("Digite o modelo do carro: ");
+                scanf("%s", novoCarro.modelo);
+                printf("Digite o serviço desejado (rodas[1]/higienização[2]): ");
+                scanf("%d", &novoCarro.servico);
+                
+                // Verifica se o serviço escolhido pelo carro há vagas, caso haja adiciona ele a fila do respectivo serviço, caso contrário coloca o carro na fila de entrada(esperando por uma vaga do seu serviço abrir)
+                if (novoCarro.servico == 1) {
+                    if (servicoRodas.quantidade < 2) {
+                        adicionarAoServico(&servicoRodas, novoCarro);
+                        printf("\nCarro %s registrado no serviço de rodas.\n", novoCarro.placa);
+                    } else {
+                        enfileirar(&filaEntrada, novoCarro);
+                        printf("\nNão há espaço no serviço de rodas, o carro foi para a fila de entrada.\n");
+                    }
+                } else if (novoCarro.servico == 2) {
+                    if (servicoHigienizacao.quantidade < 2) {
+                        adicionarAoServico(&servicoHigienizacao, novoCarro);
+                        printf("\nCarro %s registrado no serviço de higienização.\n", novoCarro.placa);
+                    } else {
+                        enfileirar(&filaEntrada, novoCarro);
+                        printf("\nNão há espaço no serviço de higienização, o carro foi para a fila de entrada.\n");
+                    }
+                } else {
+                    printf("\nServiço inválido.\n");
+                }
+                break;
+            }
+            case 2: {
+                int escolhaServico;
+                printf("Escolha o serviço para realizar a saída (rodas[1]/higienização[2]): ");
+                scanf("%d", &escolhaServico);
+
+                if (escolhaServico == 1) {
+                    saidaDeCarros(&servicoRodas, &filaSaida);
+                } else if (escolhaServico == 2) {
+                    saidaDeCarros(&servicoHigienizacao, &filaSaida);
+                } else {
+                    printf("\nServiço inválido.\n");
+                }
+
+                // Movimenta carros da fila de entrada para o serviço
+                for (int i = 0; i < filaEntrada.tamanho + filaEntrada.tamanho; i++) {
+                    moverParaServico(&filaEntrada, &servicoRodas, &servicoHigienizacao);
+                }
+                break;
+            }
+            case 3: {
+                entregaCarros(&filaSaida);
+                break;
+            }
+            case 4: {
+                mostrarFilas(&filaEntrada, &servicoRodas, &servicoHigienizacao, &filaSaida);
+                break;
+            }
+            case 0: {
+                printf("\nSaindo do programa.\n");
+                break;
+            }
+            default: {
+                printf("\nOpção inválida.\n");
+                break;
+            }
+        }
+
+    } while (opcao != 0);
+
+    return 0;
+}
+
 void inicializarFila(Fila* fila) {
     fila->frente = NULL;
     fila->tras = NULL;
@@ -169,105 +299,4 @@ void mostrarFilas(Fila* filaEntrada, Servico* servicoRodas, Servico* servicoHigi
         atual = atual->proximo;
     }
     printf("FIM\n");
-}
-
-// Função principal
-int main() {
-    // Iniciliazação das filas
-    Fila filaEntrada;
-    Fila filaSaida;
-
-    inicializarFila(&filaEntrada);
-    inicializarFila(&filaSaida);
-
-    Servico servicoRodas;
-    Servico servicoHigienizacao;
-
-    inicializarServico(&servicoRodas);
-    inicializarServico(&servicoHigienizacao);
-
-    // Loop do menu principal
-    int opcao;
-
-    do {
-        printf("\nMenu:\n");
-        printf("1 - Registrar entrada de carro\n");
-        printf("2 - Realizar saída de carros dos serviços\n");
-        printf("3 - Entregar carros (remover da fila de saída)\n");
-        printf("4 - Mostrar filas\n");
-        printf("0 - Sair\n");
-        printf("Escolha uma opção: ");
-        scanf("%d", &opcao);
-
-        switch (opcao) {
-            case 1: {
-                Carro novoCarro;
-                printf("Digite a placa do carro: ");
-                scanf("%s", novoCarro.placa);
-                printf("Digite o modelo do carro: ");
-                scanf("%s", novoCarro.modelo);
-                printf("Digite o serviço desejado (rodas[1]/higienização[2]): ");
-                scanf("%d", &novoCarro.servico);
-
-                if (novoCarro.servico == 1) {
-                    if (servicoRodas.quantidade < 2) {
-                        adicionarAoServico(&servicoRodas, novoCarro);
-                        printf("\nCarro %s registrado no serviço de rodas.\n", novoCarro.placa);
-                    } else {
-                        enfileirar(&filaEntrada, novoCarro);
-                        printf("\nNão há espaço no serviço de rodas, o carro foi para a fila de entrada.\n");
-                    }
-                } else if (novoCarro.servico == 2) {
-                    if (servicoHigienizacao.quantidade < 2) {
-                        adicionarAoServico(&servicoHigienizacao, novoCarro);
-                        printf("\nCarro %s registrado no serviço de higienização.\n", novoCarro.placa);
-                    } else {
-                        enfileirar(&filaEntrada, novoCarro);
-                        printf("\nNão há espaço no serviço de higienização, o carro foi para a fila de entrada.\n");
-                    }
-                } else {
-                    printf("\nServiço inválido.\n");
-                }
-                break;
-            }
-            case 2: {
-                int escolhaServico;
-                printf("Escolha o serviço para realizar a saída (rodas[1]/higienização[2]): ");
-                scanf("%d", &escolhaServico);
-
-                if (escolhaServico == 1) {
-                    saidaDeCarros(&servicoRodas, &filaSaida);
-                } else if (escolhaServico == 2) {
-                    saidaDeCarros(&servicoHigienizacao, &filaSaida);
-                } else {
-                    printf("\nServiço inválido.\n");
-                }
-
-                // Movimenta carros da fila de entrada para o serviço
-                for (int i = 0; i < filaEntrada.tamanho + filaEntrada.tamanho; i++) {
-                    moverParaServico(&filaEntrada, &servicoRodas, &servicoHigienizacao);
-                }
-                break;
-            }
-            case 3: {
-                entregaCarros(&filaSaida);
-                break;
-            }
-            case 4: {
-                mostrarFilas(&filaEntrada, &servicoRodas, &servicoHigienizacao, &filaSaida);
-                break;
-            }
-            case 0: {
-                printf("\nSaindo do programa.\n");
-                break;
-            }
-            default: {
-                printf("\nOpção inválida.\n");
-                break;
-            }
-        }
-
-    } while (opcao != 0);
-
-    return 0;
 }
