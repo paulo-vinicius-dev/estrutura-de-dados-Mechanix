@@ -76,11 +76,11 @@ int main() {
     do {
         printf("\nMenu:\n");
         printf("1 - Registrar entrada de carro\n");
-        printf("2 - Realizar saída de carros dos serviços\n");
-        printf("3 - Entregar carros (remover da fila de saída)\n");
+        printf("2 - Realizar saida de carros dos servicos\n");
+        printf("3 - Entregar carros (remover da fila de saida)\n");
         printf("4 - Mostrar filas\n");
         printf("0 - Sair\n");
-        printf("Escolha uma opção: ");
+        printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
 
         switch (opcao) {
@@ -91,34 +91,34 @@ int main() {
                 scanf("%s", novoCarro.placa);
                 printf("Digite o modelo do carro: ");
                 scanf("%s", novoCarro.modelo);
-                printf("Digite o serviço desejado (rodas[1]/higienização[2]): ");
+                printf("Digite o servico desejado (rodas[1]/higienizacao[2]): ");
                 scanf("%d", &novoCarro.servico);
-                
+
                 // Verifica se o serviço escolhido pelo carro há vagas, caso haja adiciona ele a fila do respectivo serviço, caso contrário coloca o carro na fila de entrada(esperando por uma vaga do seu serviço abrir)
                 if (novoCarro.servico == 1) {
                     if (servicoRodas.quantidade < 2) {
                         adicionarAoServico(&servicoRodas, novoCarro);
-                        printf("\nCarro %s registrado no serviço de rodas.\n", novoCarro.placa);
+                        printf("\nCarro %s registrado no servico de rodas.\n", novoCarro.placa);
                     } else {
                         enfileirar(&filaEntrada, novoCarro);
-                        printf("\nNão há espaço no serviço de rodas, o carro foi para a fila de entrada.\n");
+                        printf("\nNao ha espaco no servico de rodas, o carro foi para a fila de entrada.\n");
                     }
                 } else if (novoCarro.servico == 2) {
                     if (servicoHigienizacao.quantidade < 2) {
                         adicionarAoServico(&servicoHigienizacao, novoCarro);
-                        printf("\nCarro %s registrado no serviço de higienização.\n", novoCarro.placa);
+                        printf("\nCarro %s registrado no servico de higienizacao.\n", novoCarro.placa);
                     } else {
                         enfileirar(&filaEntrada, novoCarro);
-                        printf("\nNão há espaço no serviço de higienização, o carro foi para a fila de entrada.\n");
+                        printf("\nNao ha espaco no servico de higienizacao, o carro foi para a fila de entrada.\n");
                     }
                 } else {
-                    printf("\nServiço inválido.\n");
+                    printf("\nServico invalido.\n");
                 }
                 break;
             }
             case 2: {
                 int escolhaServico;
-                printf("Escolha o serviço para realizar a saída (rodas[1]/higienização[2]): ");
+                printf("Escolha o servico para realizar a saida (rodas[1]/higienizacao[2]): ");
                 scanf("%d", &escolhaServico);
 
                 if (escolhaServico == 1) {
@@ -126,7 +126,7 @@ int main() {
                 } else if (escolhaServico == 2) {
                     saidaDeCarros(&servicoHigienizacao, &filaSaida);
                 } else {
-                    printf("\nServiço inválido.\n");
+                    printf("\nServico invalido.\n");
                 }
 
                 // Movimenta carros da fila de entrada para o serviço
@@ -148,7 +148,7 @@ int main() {
                 break;
             }
             default: {
-                printf("\nOpção inválida.\n");
+                printf("\nOpcao invalida.\n");
                 break;
             }
         }
@@ -167,7 +167,7 @@ void inicializarFila(Fila* fila) {
 void enfileirar(Fila* fila, Carro carro) {
     Nodo* novoNodo = (Nodo*)malloc(sizeof(Nodo));
     if (novoNodo == NULL) {
-        printf("\nErro na alocação de memória.\n");
+        printf("\nErro na alocacao de memoria.\n");
         exit(EXIT_FAILURE);
     }
 
@@ -217,7 +217,7 @@ void adicionarAoServico(Servico* servico, Carro carro) {
         servico->carros[servico->quantidade] = carro;
         servico->quantidade++;
     } else {
-        printf("\nO serviço está lotado.\n");
+        printf("\nO servico esta lotado.\n");
     }
 }
 
@@ -225,8 +225,8 @@ void adicionarAoServico(Servico* servico, Carro carro) {
 void saidaDeCarros(Servico* servico, Fila* filaSaida) {
     if (servico->quantidade > 0) {
         Carro carro = servico->carros[0];
-        printf("\nCarro %s saindo do serviço de %s.\n", carro.placa,
-               carro.servico == 1 ? "rodas" : "higienização");
+        printf("\nCarro %s saindo do servico de %s.\n", carro.placa,
+               carro.servico == 1 ? "rodas" : "higienizacao");
         enfileirar(filaSaida, carro);
 
         // Remove o carro do serviço
@@ -235,7 +235,7 @@ void saidaDeCarros(Servico* servico, Fila* filaSaida) {
         }
         servico->quantidade--;
     } else {
-        printf("\nO serviço está vazio.\n");
+        printf("\nO servico esta vazio.\n");
     }
 }
 
@@ -247,10 +247,10 @@ void moverParaServico(Fila* filaEntrada, Servico* servicoRodas, Servico* servico
 
         if (carro.servico == 1 && servicoRodas->quantidade < 2) {  // Carro para serviço de rodas
             adicionarAoServico(servicoRodas, carro);
-            printf("\nCarro %s movido do serviço de entrada para o serviço de rodas.\n", carro.placa);
+            printf("\nCarro %s movido do servico de entrada para o servico de rodas.\n", carro.placa);
         } else if (carro.servico == 2 && servicoHigienizacao->quantidade < 2) {  // Carro para serviço de higienização
             adicionarAoServico(servicoHigienizacao, carro);
-            printf("\nCarro %s movido do serviço de entrada para o serviço de higienização.\n", carro.placa);
+            printf("\nCarro %s movido do servico de entrada para o servico de higienizacao.\n", carro.placa);
         } else {
             enfileirar(filaEntrada, carro);
             break;
@@ -264,7 +264,7 @@ void entregaCarros(Fila* filaSaida) {
         Carro carro = desenfileirar(filaSaida);
         printf("\nCarro %s entregue.\n", carro.placa);
     } else {
-        printf("\nFila de saída vazia.\n");
+        printf("\nFila de saida vazia.\n");
     }
 }
 
@@ -280,19 +280,19 @@ void mostrarFilas(Fila* filaEntrada, Servico* servicoRodas, Servico* servicoHigi
     }
     printf("FIM\n");
 
-    printf("\nServiço de Rodas: ");
+    printf("\nServico de Rodas: ");
     for (int i = 0; i < servicoRodas->quantidade; i++) {
         printf("%s -> ", servicoRodas->carros[i].placa);
     }
     printf("FIM\n");
 
-    printf("\nServiço de Higienização: ");
+    printf("\nServico de Higienizacao: ");
     for (int i = 0; i < servicoHigienizacao->quantidade; i++) {
         printf("%s -> ", servicoHigienizacao->carros[i].placa);
     }
     printf("FIM\n");
 
-    printf("\nFila de Saída: ");
+    printf("\nFila de Saida: ");
     atual = filaSaida->frente;
     while (atual != NULL) {
         printf("%s -> ", atual->carro.placa);
